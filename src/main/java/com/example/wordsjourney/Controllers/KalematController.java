@@ -29,7 +29,7 @@ public class KalematController {
             user.setScore(0L);
             boolean message = signUp.saveUser(user);
             if (!message) {
-                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Couldn't Signup", "405");
+                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Couldn't Signup User Exists", "405");
                 return ResponseEntity.status(405).body(response);
             } else {
                 GeneralResponse<userDTO> response2 = PreperResponse.preperResponse(null, "User Added !", "200");
