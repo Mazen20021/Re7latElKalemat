@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class signupService implements signupINT {
     signupRepoINT userRepoINT;
-
     @Override
     public boolean saveUser(userDTO user) {
         Mapper mapper = new Mapper();
@@ -23,7 +22,6 @@ public class signupService implements signupINT {
             return false;
         }
     }
-
     @Override
     public boolean existingUserByEmailAndPassword(String email , String password) {
        return userRepoINT.existsByEmailAndPassword(email,password);
