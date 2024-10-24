@@ -2,6 +2,7 @@ package com.example.wordsjourney.Controllers;
 
 import com.example.wordsjourney.Models.Dtos.APIToken;
 import com.example.wordsjourney.Models.Dtos.userDTO;
+import com.example.wordsjourney.Models.Entity.userEntity;
 import com.example.wordsjourney.Models.GeneralResponse;
 import com.example.wordsjourney.Services.signupINT;
 import org.springframework.http.ResponseEntity;
@@ -55,4 +56,35 @@ public class KalematController {
         }
         }
     }
+    @PostMapping("/update")
+    public ResponseEntity<GeneralResponse<userDTO>> Update(
+            @RequestHeader(value = "email") String email,
+            @RequestHeader(value = "name") String name,
+            @RequestHeader(value = "picture") String picture,
+            @RequestHeader(value = "token") String token
+    ) {
+        if (!token.equals(APIToken.token)) {
+            GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Access Denied", "300");
+            return ResponseEntity.status(300).body(response);
+        } else {
+            // Check if user exists
+            boolean existingUser = signUp.existsByEmail(email);
+            if (!existingUser) {
+                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User not found", "404");
+                return ResponseEntity.status(404).body(response);
+            }
+
+            // Call the updated method with the necessary parameters
+            boolean isUpdated = signUp.updateUser(email, name, picture);
+            if (!isUpdated) {
+                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to update user", "500");
+                return ResponseEntity.status(500).body(response);
+            }
+
+            GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User Updated Successfully!", "200");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+
 }
