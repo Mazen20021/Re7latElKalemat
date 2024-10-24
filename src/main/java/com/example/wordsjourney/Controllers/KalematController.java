@@ -84,7 +84,7 @@ public class KalematController {
             return ResponseEntity.ok(response);
         }
     }
-    @PostMapping("/getdata")
+    @GetMapping("/getdata")
     public ResponseEntity<GeneralResponse<userDTO>> Update(
             @RequestHeader(value = "email") String email,
             @RequestHeader(value = "token") String token
