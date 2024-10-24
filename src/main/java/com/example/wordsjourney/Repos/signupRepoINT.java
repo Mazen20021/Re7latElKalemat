@@ -7,4 +7,6 @@ public interface signupRepoINT extends JpaRepository<userEntity, Long> {
     boolean existsByEmailAndPassword(String email , String pass);
     boolean existsByEmail(String email);
     userEntity findByEmail(String email);
+
+    userEntity getByEmail(String email);
 }

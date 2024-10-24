@@ -54,4 +54,10 @@ public class signupService implements signupINT {
         return false; // User not found or save failed
     }
 
+    @Override
+    public userDTO getUserData(String email) {
+        Mapper mapper = new Mapper();
+        return mapper.getmap().map(userRepoINT.getByEmail(email),userDTO.class);
+    }
+
 }

@@ -9,4 +9,5 @@ public interface signupINT {
     boolean existingUserByEmailAndPassword(String email , String password);
     boolean existsByEmail(String email);
     boolean updateUser(String email, String name, String picture);
+    userDTO getUserData(String email);
 }

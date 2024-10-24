@@ -2,7 +2,6 @@ package com.example.wordsjourney.Controllers;
 
 import com.example.wordsjourney.Models.Dtos.APIToken;
 import com.example.wordsjourney.Models.Dtos.userDTO;
-import com.example.wordsjourney.Models.Entity.userEntity;
 import com.example.wordsjourney.Models.GeneralResponse;
 import com.example.wordsjourney.Services.signupINT;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,7 @@ import com.example.wordsjourney.util.PreperResponse;
 @RestController
 @RequiredArgsConstructor
 public class KalematController {
-    private final signupINT signUp;
+    private final signupINT kalemat;
 
     @PostMapping("/signup")
     public ResponseEntity<GeneralResponse<userDTO>> SignUp(@RequestHeader(value = "name") String name,@RequestHeader(value = "email") String email, @RequestHeader(value = "password") String password,@RequestHeader(value = "picture") String picture ,@RequestHeader(value = "token") String token ) {
@@ -28,12 +27,12 @@ public class KalematController {
             user.setPassword(password);
             user.setPicture(picture);
             user.setScore(0L);
-            boolean message = signUp.saveUser(user);
+            boolean message = kalemat.saveUser(user);
             if (!message) {
                 GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Couldn't Signup User Exists", "405");
                 return ResponseEntity.status(405).body(response);
             } else {
-                GeneralResponse<userDTO> response2 = PreperResponse.preperResponse(null, "User Added !", "200");
+                GeneralResponse<userDTO> response2 = PreperResponse.preperResponse(null, "User Added!", "200");
                 return ResponseEntity.ok(response2);
             }
         }
@@ -46,7 +45,7 @@ public class KalematController {
             GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Access Denied", "300");
             return ResponseEntity.status(300).body(response);
         }else {
-        boolean message = signUp.existingUserByEmailAndPassword(email,password);
+        boolean message = kalemat.existingUserByEmailAndPassword(email,password);
         if (!message) {
             GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User not Found", "405");
             return ResponseEntity.status(405).body(response);
@@ -68,14 +67,14 @@ public class KalematController {
             return ResponseEntity.status(300).body(response);
         } else {
             // Check if user exists
-            boolean existingUser = signUp.existsByEmail(email);
+            boolean existingUser = kalemat.existsByEmail(email);
             if (!existingUser) {
                 GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User not found", "404");
                 return ResponseEntity.status(404).body(response);
             }
 
             // Call the updated method with the necessary parameters
-            boolean isUpdated = signUp.updateUser(email, name, picture);
+            boolean isUpdated = kalemat.updateUser(email, name, picture);
             if (!isUpdated) {
                 GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to update user", "500");
                 return ResponseEntity.status(500).body(response);
@@ -85,6 +84,28 @@ public class KalematController {
             return ResponseEntity.ok(response);
         }
     }
-
+    @PostMapping("/getdata")
+    public ResponseEntity<GeneralResponse<userDTO>> Update(
+            @RequestHeader(value = "email") String email,
+            @RequestHeader(value = "token") String token
+    ) {
+        if (!token.equals(APIToken.token)) {
+            GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Access Denied", "300");
+            return ResponseEntity.status(300).body(response);
+        } else {
+            boolean existingUser = kalemat.existsByEmail(email);
+            if (!existingUser) {
+                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User not found", "404");
+                return ResponseEntity.status(404).body(response);
+            }
+            userDTO user = kalemat.getUserData(email);
+            if (user == null) {
+                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to get user's data", "505");
+                return ResponseEntity.status(500).body(response);
+            }
+            GeneralResponse<userDTO> response = PreperResponse.preperResponse(user, "User Data", "200");
+            return ResponseEntity.ok(response);
+        }
+    }
 
 }
