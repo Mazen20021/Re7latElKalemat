@@ -72,14 +72,29 @@ public class KalematController {
                 GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User not found", "404");
                 return ResponseEntity.status(404).body(response);
             }
+            userDTO user = kalemat.getUserData(email);
+            if(name.isEmpty() || name.equals(user.getName()))
+            {
+                boolean isUpdated = kalemat.updateUser(email, user.getName(), picture);
+                if (!isUpdated) {
+                    GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to update user", "500");
+                    return ResponseEntity.status(500).body(response);
+                }
+            }else if(picture.isEmpty() || picture.equals(user.getPicture()))
+            {
+                boolean isUpdated = kalemat.updateUser(email, name, user.getPicture());
+                if (!isUpdated) {
+                    GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to update user", "500");
+                    return ResponseEntity.status(500).body(response);
+                }
 
-            // Call the updated method with the necessary parameters
-            boolean isUpdated = kalemat.updateUser(email, name, picture);
-            if (!isUpdated) {
-                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to update user", "500");
-                return ResponseEntity.status(500).body(response);
+            }else {
+                boolean isUpdated = kalemat.updateUser(email, name, picture);
+                if (!isUpdated) {
+                    GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to update user", "500");
+                    return ResponseEntity.status(500).body(response);
+                }
             }
-
             GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User Updated Successfully!", "200");
             return ResponseEntity.ok(response);
         }
@@ -101,9 +116,32 @@ public class KalematController {
             userDTO user = kalemat.getUserData(email);
             if (user == null) {
                 GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to get user's data", "505");
-                return ResponseEntity.status(500).body(response);
+                return ResponseEntity.status(505).body(response);
             }
             GeneralResponse<userDTO> response = PreperResponse.preperResponse(user, "User Data", "200");
+            return ResponseEntity.ok(response);
+        }
+    }
+    @GetMapping("/delete")
+    public ResponseEntity<GeneralResponse<userDTO>> Delete(
+            @RequestHeader(value = "email") String email,
+            @RequestHeader(value = "token") String token
+    ) {
+        if (!token.equals(APIToken.token)) {
+            GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Access Denied", "300");
+            return ResponseEntity.status(300).body(response);
+        } else {
+            boolean existingUser = kalemat.existsByEmail(email);
+            if (!existingUser) {
+                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User not found", "404");
+                return ResponseEntity.status(404).body(response);
+            }
+            boolean deleted = kalemat.deleteUserData(email);
+            if (!deleted) {
+                GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "Failed to delete this user", "510");
+                return ResponseEntity.status(510).body(response);
+            }
+            GeneralResponse<userDTO> response = PreperResponse.preperResponse(null, "User Deleted!", "200");
             return ResponseEntity.ok(response);
         }
     }

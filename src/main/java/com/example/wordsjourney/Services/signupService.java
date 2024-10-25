@@ -6,6 +6,7 @@ import com.example.wordsjourney.Repos.signupRepoINT;
 import lombok.AllArgsConstructor;
 import com.example.wordsjourney.Config.Mapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -58,6 +59,18 @@ public class signupService implements signupINT {
     public userDTO getUserData(String email) {
         Mapper mapper = new Mapper();
         return mapper.getmap().map(userRepoINT.getByEmail(email),userDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteUserData(String email) {
+        try{
+            userRepoINT.deleteByEmail(email);
+            return  true;
+        }catch (Exception e)
+        {
+            return  false;
+        }
     }
 
 }
