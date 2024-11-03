@@ -55,7 +55,7 @@ public class KalematController {
         }
         }
     }
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<GeneralResponse<userDTO>> Update(
             @RequestHeader(value = "email") String email,
             @RequestHeader(value = "name") String name,
@@ -122,7 +122,7 @@ public class KalematController {
             return ResponseEntity.ok(response);
         }
     }
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<GeneralResponse<userDTO>> Delete(
             @RequestHeader(value = "email") String email,
             @RequestHeader(value = "token") String token
