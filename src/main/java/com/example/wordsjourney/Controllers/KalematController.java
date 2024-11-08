@@ -55,7 +55,7 @@ public class KalematController {
         }
         }
     }
-    @PatchMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<GeneralResponse<userDTO>> Update(
             @RequestHeader(value = "email") String email,
             @RequestHeader(value = "name") String name,
